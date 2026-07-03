@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VoxRead - Universal Text to Speech</title>
+    <meta
+      name="description"
+      content="VoxRead is a polished, fully client-side text-to-speech website built with HTML, CSS, JavaScript and the Web Speech API."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav container">
+        <a class="brand" href="#home">VoxRead</a>
+        <div class="nav-links">
+          <a href="#playground">Playground</a>
+          <a href="#article">Article</a>
+          <a href="#blogs">Blog</a>
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="home">
+      <section class="hero container">
+        <div class="hero-content">
+          <p class="eyebrow">Accessible • Fast • Frontend Only</p>
+          <h1 class="readable-content">Turn any text into a clear voice reading experience.</h1>
+          <p class="hero-text readable-content clickable-read">
+            VoxRead brings articles, stories, FAQ answers, blog summaries, and custom text to life with the browser's built-in Web Speech API.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="readPageBtn">Read Entire Page</button>
+            <a class="btn btn-secondary" href="#playground">Try the Playground</a>
+          </div>
+          <div class="hero-stats">
+            <div>
+              <strong>100%</strong>
+              <span>Client-side</span>
+            </div>
+            <div>
+              <strong>8+</strong>
+              <span>Voice options</span>
+            </div>
+            <div>
+              <strong>24/7</strong>
+              <span>Instant reading</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-card">
+          <h2>What you can listen to</h2>
+          <ul>
+            <li>Headings and paragraphs</li>
+            <li>Custom text input</li>
+            <li>Blog summaries and articles</li>
+            <li>FAQs, quotes and stories</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="features container" aria-label="Features">
+        <div class="section-heading">
+          <p class="eyebrow">Core features</p>
+          <h2>Everything you need for smooth listening</h2>
+        </div>
+        <div class="feature-grid">
+          <article class="card">
+            <h3>Instant Playback</h3>
+            <p>Speak, pause, resume and stop with one click.</p>
+          </article>
+          <article class="card">
+            <h3>Voice Control</h3>
+            <p>Adjust rate, pitch, volume and switch voices instantly.</p>
+          </article>
+          <article class="card">
+            <h3>Accessibility Ready</h3>
+            <p>Dark mode, font resizing and focused reading support.</p>
+          </article>
+          <article class="card">
+            <h3>Live Progress</h3>
+            <p>Keep track of what is being read as the page highlights it.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="container section" id="playground">
+        <div class="section-heading">
+          <p class="eyebrow">Text to Speech Playground</p>
+          <h2>Type, paste or speak any text</h2>
+        </div>
+        <div class="playground-grid">
+          <div class="panel">
+            <label for="textInput">Enter text</label>
+            <textarea id="textInput" placeholder="Paste a paragraph, note, or script...">VoxRead makes everyday reading easier. Try speaking this sample text and adjust the voice controls below.</textarea>
+            <div class="toolbar">
+              <button class="btn btn-primary" id="speakButton">Speak</button>
+              <button class="btn" id="pauseButton">Pause</button>
+              <button class="btn" id="resumeButton">Resume</button>
+              <button class="btn" id="stopButton">Stop</button>
+              <button class="btn btn-secondary" id="clearTextButton">Clear</button>
+            </div>
+            <div class="meta">
+              <span id="charCount">0 characters</span>
+              <span id="wordCount">0 words</span>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Voice settings</h3>
+            <label for="voiceSelect">Voice</label>
+            <select id="voiceSelect"></select>
+
+            <label for="languageSelect">Language</label>
+            <select id="languageSelect"></select>
+
+            <label for="rateRange">Rate <span id="rateValue">1.0x</span></label>
+            <input id="rateRange" type="range" min="0.5" max="2" step="0.1" value="1" />
+
+            <label for="pitchRange">Pitch <span id="pitchValue">1.0x</span></label>
+            <input id="pitchRange" type="range" min="0.5" max="2" step="0.1" value="1" />
+
+            <label for="volumeRange">Volume <span id="volumeValue">1.0x</span></label>
+            <input id="volumeRange" type="range" min="0" max="1" step="0.1" value="1" />
+
+            <button class="btn btn-secondary" id="voicePreviewButton">Voice Test</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="container section" id="article">
+        <div class="section-heading">
+          <p class="eyebrow">Article reader</p>
+          <h2>Listen to a complete sample article</h2>
+        </div>
+        <div class="article-card">
+          <div class="article-header">
+            <h3>How Voice Technology Improves Everyday Life</h3>
+            <button class="btn btn-primary" data-read-target="articleBody">Read Complete Article</button>
+          </div>
+          <div id="articleBody" class="readable-content clickable-read">
+            <p>Text-to-speech tools help people absorb information while multitasking, commuting, or relaxing at home. The experience can feel more natural when voices are expressive and the pacing feels comfortable.</p>
+            <p>In education, students can listen to lessons, review notes and revisit articles without staring at a screen for hours. In accessibility, clear speech output opens digital content to more people and creates a smoother experience.</p>
+            <p>By combining thoughtful UI, controlled settings and responsive design, voice experiences become more helpful and easier to enjoy every day.</p>
+          </div>
+          <div class="section-actions">
+            <button class="btn" data-read-target="articleIntro">Read Section</button>
+            <button class="btn" data-read-target="articleBenefit">Read Section</button>
+            <button class="btn" data-read-target="articleWrap">Read Section</button>
+          </div>
+          <div class="article-sections">
+            <div id="articleIntro" class="readable-content clickable-read">
+              <h4>Introduction</h4>
+              <p>Voice assistants and reading tools are becoming part of daily routines because they make information easier to access in motion.</p>
+            </div>
+            <div id="articleBenefit" class="readable-content clickable-read">
+              <h4>Benefits</h4>
+              <p>Listening can support focus, reduce eye strain and improve comprehension across different learning styles.</p>
+            </div>
+            <div id="articleWrap" class="readable-content clickable-read">
+              <h4>Closing thoughts</h4>
+              <p>A well-designed reading experience turns browsing into something calm, useful and flexible for modern lifestyles.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="container section" id="blogs">
+        <div class="section-heading">
+          <p class="eyebrow">Blog section</p>
+          <h2>Short sample reads for quick listening</h2>
+        </div>
+        <div class="blog-grid">
+          <article class="card blog-card">
+            <h3>Designing for calm reading</h3>
+            <p>Good audio experiences feel natural, paced and easy to pause whenever the moment changes.</p>
+            <div class="card-actions">
+              <button class="btn" data-read-target="blogOne">Read Summary</button>
+              <button class="btn btn-secondary" data-read-target="blogOneFull">Read Full Blog</button>
+            </div>
+            <div id="blogOne" class="readable-content">Simple layouts, clear spacing and predictable controls make voice reading soothing and accessible.</div>
+            <div id="blogOneFull" class="readable-content">When a reader can hear a page clearly without feeling overwhelmed, every interaction becomes more welcoming. Balanced pacing and concise text help listeners stay engaged from the first line to the last.</div>
+          </article>
+          <article class="card blog-card">
+            <h3>Why voices feel personal</h3>
+            <p>Voices that sound natural help people stay engaged for longer stretches of time.</p>
+            <div class="card-actions">
+              <button class="btn" data-read-target="blogTwo">Read Summary</button>
+              <button class="btn btn-secondary" data-read-target="blogTwoFull">Read Full Blog</button>
+            </div>
+            <div id="blogTwo" class="readable-content">Choice of voice and tone strongly influence how comfortable a listening experience feels in the moment.</div>
+            <div id="blogTwoFull" class="readable-content">A warm, steady voice supports concentration while a more energetic tone can make educational content feel lively. The right voice can make a simple page feel almost like a conversation.</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="container section" id="faq">
+        <div class="section-heading">
+          <p class="eyebrow">FAQ</p>
+          <h2>Quick answers you can hear instantly</h2>
+        </div>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Is VoxRead free to use?</summary>
+            <div class="faq-answer readable-content">
+              <p>Yes, VoxRead is fully frontend based and works directly in the browser without any login or payment.</p>
+              <button class="btn" data-read-target="faqOneAnswer">Read Answer</button>
+              <div id="faqOneAnswer" class="hidden-text">Yes, VoxRead is fully frontend based and works directly in the browser without any login or payment.</div>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>Can I use it on mobile?</summary>
+            <div class="faq-answer readable-content">
+              <p>Absolutely. The layout adjusts smoothly for phones, tablets and desktops.</p>
+              <button class="btn" data-read-target="faqTwoAnswer">Read Answer</button>
+              <div id="faqTwoAnswer" class="hidden-text">Absolutely. The layout adjusts smoothly for phones, tablets and desktops.</div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="container section" id="quotes">
+        <div class="section-heading">
+          <p class="eyebrow">Quote generator</p>
+          <h2>Get inspired with one tap</h2>
+        </div>
+        <div class="quote-card">
+          <blockquote id="quoteText" class="readable-content clickable-read">“Reading aloud turns quiet thoughts into a clear voice.”</blockquote>
+          <div class="card-actions">
+            <button class="btn btn-primary" id="newQuoteButton">New Quote</button>
+            <button class="btn" id="readQuoteButton">Read Quote</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="container section" id="story">
+        <div class="section-heading">
+          <p class="eyebrow">Story reader</p>
+          <h2>Enjoy a miniature story with narration</h2>
+        </div>
+        <div class="story-card readable-content clickable-read" id="storyText">
+          <h3>The Lantern on the Hill</h3>
+          <p>Every evening, Mira climbed the hill with a small lantern and whispered stories to the wind. The lantern did not make the path brighter, but it made her feel brave enough to keep walking.</p>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-primary" id="readStoryButton">Read Story</button>
+          <button class="btn" id="pauseStoryButton">Pause</button>
+          <button class="btn" id="resumeStoryButton">Resume</button>
+          <button class="btn" id="stopStoryButton">Stop</button>
+        </div>
+      </section>
+
+      <section class="container section" id="contact">
+        <div class="section-heading">
+          <p class="eyebrow">Contact</p>
+          <h2>Built as a polished front-end portfolio project</h2>
+        </div>
+        <div class="contact-card">
+          <p>Have ideas for a stronger reading experience? This project is designed to be expanded with more pages, richer voices and deeper interactions.</p>
+          <div class="contact-links">
+            <a href="#home">About</a>
+            <a href="#blogs">Blog</a>
+            <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
+          </div>
+          <button class="btn btn-secondary" id="readFooterButton">Read Footer</button>
+        </div>
+      </section>
+    </main>
+
+    <button class="accessibility-toggle" id="accessPanelToggle" aria-label="Open accessibility panel">♿</button>
+    <aside class="access-panel" id="accessPanel">
+      <div class="access-panel-header">
+        <h3>Accessibility Panel</h3>
+        <button class="access-panel-close" id="accessPanelClose" aria-label="Close accessibility panel">×</button>
+      </div>
+      <button class="btn" id="fontIncrease">Increase Font</button>
+      <button class="btn" id="fontDecrease">Decrease Font</button>
+      <button class="btn" id="themeToggle">Toggle Theme</button>
+      <button class="btn" id="panelReadPage">Read Page</button>
+      <button class="btn" id="panelStop">Stop Reading</button>
+    </aside>
+
+    <div class="reading-progress" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="mini-player" id="miniPlayer">
+      <span id="statusLabel">Ready to speak</span>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <p>VoxRead • Universal Text-to-Speech Website</p>
+        <p>Powered by the browser's built-in Web Speech API.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
