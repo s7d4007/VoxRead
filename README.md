@@ -55,4 +55,4 @@ VoxRead converts page text into natural speech and includes features such as:
 
 ## License
 
-This project may be used for learning, portfolio, or demo purposes.
+This project is provided for educational use only. See the `LICENSE` file for full terms and permitted use.
