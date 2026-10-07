@@ -189,10 +189,19 @@ function readSelection() {
 }
 
 function readPage() {
-  const items = Array.from(document.querySelectorAll('main h1, main h2, main h3, main p, main li, main td, main blockquote, main .faq-answer, main .readable-content'))
+  const readableSelector = 'main h1, main h2, main h3, main p, main li, main td, main blockquote, main .faq-answer, main .readable-content';
+  const items = Array.from(document.querySelectorAll(readableSelector))
     .filter((element) => {
       const text = element.textContent.replace(/\s+/g, ' ').trim();
-      return text && !element.closest('nav') && !element.closest('footer') && !element.closest('.toolbar') && !element.closest('.card-actions') && !element.closest('.section-actions') && element.tagName !== 'BUTTON';
+      const readableParent = element.parentElement?.closest('.readable-content');
+      return text
+        && !readableParent
+        && !element.closest('nav')
+        && !element.closest('footer')
+        && !element.closest('.toolbar')
+        && !element.closest('.card-actions')
+        && !element.closest('.section-actions')
+        && element.tagName !== 'BUTTON';
     })
     .map((element) => ({
       text: element.textContent.replace(/\s+/g, ' ').trim(),
