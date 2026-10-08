@@ -88,6 +88,52 @@ function setStatus(message) {
   statusLabel.textContent = message;
 }
 
+function splitTextIntoChunks(text, maxLength = 240) {
+  const normalizedText = text.replace(/\s+/g, ' ').trim();
+  if (!normalizedText) return [];
+  if (normalizedText.length <= maxLength) return [normalizedText];
+
+  const sentences = normalizedText.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [normalizedText];
+  const chunks = [];
+  let currentChunk = '';
+
+  const addSegment = (segment) => {
+    const words = segment.trim().split(/\s+/);
+    let wordChunk = '';
+
+    words.forEach((word) => {
+      const candidate = wordChunk ? `${wordChunk} ${word}` : word;
+      if (wordChunk && candidate.length > maxLength) {
+        chunks.push(wordChunk);
+        wordChunk = word;
+      } else {
+        wordChunk = candidate;
+      }
+    });
+
+    if (wordChunk) chunks.push(wordChunk);
+  };
+
+  sentences.forEach((sentence) => {
+    const normalizedSentence = sentence.trim();
+    const candidate = currentChunk ? `${currentChunk} ${normalizedSentence}` : normalizedSentence;
+
+    if (currentChunk && candidate.length > maxLength) {
+      chunks.push(currentChunk);
+      currentChunk = '';
+    }
+
+    if (normalizedSentence.length > maxLength) {
+      addSegment(normalizedSentence);
+    } else {
+      currentChunk = currentChunk ? `${currentChunk} ${normalizedSentence}` : normalizedSentence;
+    }
+  });
+
+  if (currentChunk) chunks.push(currentChunk);
+  return chunks;
+}
+
 function clearHighlight() {
   if (currentHighlight) {
     currentHighlight.classList.remove('active-read');
@@ -129,7 +175,9 @@ function speakQueue(items) {
     return;
   }
 
-  currentQueue = items;
+  currentQueue = items.flatMap((item) => (
+    splitTextIntoChunks(item.text).map((text) => ({ ...item, text }))
+  ));
   currentIndex = 0;
   currentMode = 'speaking';
   speakNext();
