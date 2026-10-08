@@ -232,6 +232,11 @@ function restorePreferences() {
   currentFontSize = savedSize;
 }
 
+function isFormControl(target) {
+  return target instanceof HTMLElement
+    && (target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON'].includes(target.tagName));
+}
+
 function bindEvents() {
   textInput.addEventListener('input', updateCounts);
   updateCounts();
@@ -331,12 +336,15 @@ function bindEvents() {
   });
 
   document.addEventListener('keydown', (event) => {
+    if (isFormControl(event.target)) return;
+
     if (event.code === 'Space') {
-      event.preventDefault();
       if (synth.paused) {
+        event.preventDefault();
         synth.resume();
         setStatus('Resumed');
       } else if (synth.speaking) {
+        event.preventDefault();
         synth.pause();
         setStatus('Paused');
       }
