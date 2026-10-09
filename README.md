@@ -18,6 +18,7 @@ VoxRead converts page text into natural speech and includes features such as:
 
 - **Text-to-Speech Playground** with live speech controls
 - **Voice Settings** panel with voice and language selectors
+- Searchable voice list with language filtering across all voices provided by the browser
 - **Read This Page** support for headings, paragraphs, lists, blockquotes, and more
 - **Article Reader** with section playback controls
 - **Blog Cards** with read-summary and full-read actions
