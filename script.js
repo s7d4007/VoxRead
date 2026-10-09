@@ -4,6 +4,7 @@ const textInput = document.getElementById('textInput');
 const charCount = document.getElementById('charCount');
 const wordCount = document.getElementById('wordCount');
 const voiceSelect = document.getElementById('voiceSelect');
+const voiceSearch = document.getElementById('voiceSearch');
 const languageSelect = document.getElementById('languageSelect');
 const rateRange = document.getElementById('rateRange');
 const rateValue = document.getElementById('rateValue');
@@ -40,43 +41,78 @@ function updateCounts() {
   wordCount.textContent = `${text ? text.split(/\s+/).length : 0} words`;
 }
 
+function getLanguageLabel(language) {
+  try {
+    const displayLanguage = new Intl.DisplayNames([navigator.language || 'en'], { type: 'language' });
+    const languageName = displayLanguage.of(language);
+    return languageName ? `${languageName} (${language})` : language;
+  } catch {
+    return language;
+  }
+}
+
+function getVoiceKey(voice) {
+  return `${voice.name}::${voice.lang}`;
+}
+
+function getVoiceLabel(voice) {
+  return `${voice.name}${voice.default ? ' (Default)' : ''} (${voice.lang})`;
+}
+
 function populateVoiceOptions() {
   voices = synth.getVoices();
-  const voiceOptions = voices.filter((voice) => voice.lang.startsWith('en') || voice.lang.startsWith('es') || voice.lang.startsWith('fr') || voice.lang.startsWith('de'));
+  const selectedVoice = voiceSelect.value;
+  const searchTerm = voiceSearch.value.trim().toLocaleLowerCase();
+  const languages = [...new Set(voices.map((voice) => voice.lang))].sort((a, b) => a.localeCompare(b));
+  const previousLanguage = languageSelect.value;
 
-  voiceSelect.innerHTML = '';
   languageSelect.innerHTML = '';
+  const allLanguagesOption = document.createElement('option');
+  allLanguagesOption.value = 'all';
+  allLanguagesOption.textContent = 'All languages';
+  languageSelect.appendChild(allLanguagesOption);
 
-  const languages = [...new Set(voiceOptions.map((voice) => voice.lang))].sort();
   languages.forEach((lang) => {
     const option = document.createElement('option');
     option.value = lang;
-    option.textContent = lang;
+    option.textContent = getLanguageLabel(lang);
     languageSelect.appendChild(option);
   });
 
-  voiceOptions.forEach((voice) => {
+  languageSelect.value = languages.includes(previousLanguage) ? previousLanguage : 'all';
+
+  const filteredVoices = voices
+    .filter((voice) => languageSelect.value === 'all' || voice.lang === languageSelect.value)
+    .filter((voice) => !searchTerm || `${voice.name} ${voice.lang}`.toLocaleLowerCase().includes(searchTerm))
+    .sort((a, b) => Number(b.default) - Number(a.default) || a.name.localeCompare(b.name));
+
+  voiceSelect.innerHTML = '';
+  filteredVoices.forEach((voice) => {
     const option = document.createElement('option');
-    option.value = voice.name;
-    option.textContent = `${voice.name} (${voice.lang})`;
+    option.value = getVoiceKey(voice);
+    option.textContent = getVoiceLabel(voice);
     voiceSelect.appendChild(option);
   });
 
-  const preferredLanguage = languageSelect.value || 'en-US';
-  const preferredVoice = voiceSelect.value || voiceOptions.find((voice) => voice.lang === preferredLanguage)?.name || voiceOptions[0]?.name;
-
-  if (preferredVoice) {
-    voiceSelect.value = preferredVoice;
-  }
-
-  if (!languageSelect.value) {
-    languageSelect.value = preferredLanguage;
+  if (filteredVoices.length) {
+    const matchingVoice = filteredVoices.find((voice) => getVoiceKey(voice) === selectedVoice)
+      || filteredVoices.find((voice) => voice.lang === languageSelect.value)
+      || filteredVoices[0];
+    voiceSelect.value = getVoiceKey(matchingVoice);
+  } else {
+    const option = document.createElement('option');
+    option.textContent = voices.length ? 'No voices match these filters' : 'No voices available';
+    option.disabled = true;
+    option.selected = true;
+    voiceSelect.appendChild(option);
   }
 }
 
 function applySpeechSettings(utterance) {
-  const selectedVoice = voices.find((voice) => voice.name === voiceSelect.value);
-  const selectedLanguage = languageSelect.value;
+  const selectedVoice = voices.find((voice) => getVoiceKey(voice) === voiceSelect.value);
+  const selectedLanguage = languageSelect.value === 'all'
+    ? selectedVoice?.lang || 'en-US'
+    : languageSelect.value;
   utterance.voice = selectedVoice || null;
   utterance.lang = selectedLanguage || 'en-US';
   utterance.rate = Number(rateRange.value);
@@ -307,6 +343,8 @@ function bindEvents() {
     updateCounts();
   });
   document.getElementById('voicePreviewButton').addEventListener('click', () => readText(textInput.value || 'Voice preview ready. Adjust the controls to hear a different tone.', 'voice preview'));
+  languageSelect.addEventListener('change', populateVoiceOptions);
+  voiceSearch.addEventListener('input', populateVoiceOptions);
   document.getElementById('readPageBtn').addEventListener('click', readPage);
   document.getElementById('readFooterButton').addEventListener('click', () => readText('VoxRead is a universal text-to-speech website built with HTML, CSS, JavaScript and the Web Speech API.', 'footer'));
 
