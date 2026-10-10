@@ -13,6 +13,7 @@ const pitchValue = document.getElementById('pitchValue');
 const volumeRange = document.getElementById('volumeRange');
 const volumeValue = document.getElementById('volumeValue');
 const statusLabel = document.getElementById('statusLabel');
+const progressBar = document.getElementById('progressBar');
 const progressFill = document.getElementById('progressFill');
 const accessPanel = document.getElementById('accessPanel');
 const accessPanelToggle = document.getElementById('accessPanelToggle');
@@ -27,6 +28,7 @@ let currentUtterance = null;
 let currentHighlight = null;
 let currentMode = 'idle';
 let currentFontSize = 16;
+let previousFocusedElement = null;
 
 const quotes = [
   '“Reading aloud turns quiet thoughts into a clear voice.”',
@@ -124,6 +126,32 @@ function setStatus(message) {
   statusLabel.textContent = message;
 }
 
+function getPanelFocusableElements() {
+  return Array.from(accessPanel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+    .filter((element) => !element.disabled && !element.hidden);
+}
+
+function openAccessPanel() {
+  previousFocusedElement = document.activeElement;
+  accessPanel.hidden = false;
+  accessPanel.setAttribute('aria-hidden', 'false');
+  accessPanelToggle.setAttribute('aria-expanded', 'true');
+  accessPanel.classList.add('open');
+  accessPanelClose.focus();
+}
+
+function closeAccessPanel(restoreFocus = true) {
+  accessPanel.classList.remove('open');
+  accessPanel.hidden = true;
+  accessPanel.setAttribute('aria-hidden', 'true');
+  accessPanelToggle.setAttribute('aria-expanded', 'false');
+
+  if (restoreFocus && previousFocusedElement instanceof HTMLElement) {
+    previousFocusedElement.focus();
+  }
+  previousFocusedElement = null;
+}
+
 function splitTextIntoChunks(text, maxLength = 240) {
   const normalizedText = text.replace(/\s+/g, ' ').trim();
   if (!normalizedText) return [];
@@ -188,10 +216,13 @@ function highlightElement(element) {
 function updateProgress() {
   if (!currentQueue.length) {
     progressFill.style.width = '0%';
+    progressBar.setAttribute('aria-valuenow', '0');
     return;
   }
   const progress = ((currentIndex + 1) / currentQueue.length) * 100;
-  progressFill.style.width = `${Math.min(progress, 100)}%`;
+  const boundedProgress = Math.min(progress, 100);
+  progressFill.style.width = `${boundedProgress}%`;
+  progressBar.setAttribute('aria-valuenow', String(Math.round(boundedProgress)));
 }
 
 function stopSpeech() {
@@ -391,18 +422,38 @@ function bindEvents() {
 
   accessPanelToggle.addEventListener('click', (event) => {
     event.stopPropagation();
-    accessPanel.classList.toggle('open');
+    if (accessPanel.classList.contains('open')) {
+      closeAccessPanel(false);
+    } else {
+      openAccessPanel();
+    }
   });
-  accessPanelClose.addEventListener('click', () => accessPanel.classList.remove('open'));
+  accessPanelClose.addEventListener('click', () => closeAccessPanel());
   document.addEventListener('click', (event) => {
     if (!accessPanel.classList.contains('open')) return;
     if (!accessPanel.contains(event.target) && event.target !== accessPanelToggle) {
-      accessPanel.classList.remove('open');
+      closeAccessPanel();
     }
   });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && accessPanel.classList.contains('open')) {
-      accessPanel.classList.remove('open');
+      closeAccessPanel();
+      return;
+    }
+
+    if (event.key === 'Tab' && accessPanel.classList.contains('open')) {
+      const focusableElements = getPanelFocusableElements();
+      if (!focusableElements.length) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
     }
   });
   document.getElementById('fontIncrease').addEventListener('click', () => adjustFontSize(1));

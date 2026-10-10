@@ -32,6 +32,11 @@ body[data-theme="dark"] {
   box-sizing: border-box;
 }
 
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
 html {
   scroll-behavior: smooth;
 }

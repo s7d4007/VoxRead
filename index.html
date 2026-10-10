@@ -277,10 +277,10 @@
       </section>
     </main>
 
-    <button class="accessibility-toggle" id="accessPanelToggle" aria-label="Open accessibility panel">♿</button>
-    <aside class="access-panel" id="accessPanel">
+    <button class="accessibility-toggle" id="accessPanelToggle" aria-label="Open accessibility panel" aria-controls="accessPanel" aria-expanded="false">♿</button>
+    <aside class="access-panel" id="accessPanel" aria-labelledby="accessPanelTitle" aria-hidden="true" hidden>
       <div class="access-panel-header">
-        <h3>Accessibility Panel</h3>
+        <h3 id="accessPanelTitle">Accessibility Panel</h3>
         <button class="access-panel-close" id="accessPanelClose" aria-label="Close accessibility panel">×</button>
       </div>
       <button class="btn" id="fontIncrease">Increase Font</button>
@@ -290,12 +290,12 @@
       <button class="btn" id="panelStop">Stop Reading</button>
     </aside>
 
-    <div class="reading-progress" id="progressBar">
+    <div class="reading-progress" id="progressBar" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
       <div class="progress-fill" id="progressFill"></div>
     </div>
 
     <div class="mini-player" id="miniPlayer">
-      <span id="statusLabel">Ready to speak</span>
+      <span id="statusLabel" role="status" aria-live="polite" aria-atomic="true">Ready to speak</span>
     </div>
 
     <footer class="site-footer">
